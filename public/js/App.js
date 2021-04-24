@@ -49,7 +49,7 @@ const main = () => {
 
 	const location = {
 		hostname: "broker.emqx.io",
-		port: 8083
+		port: 8084
 	}
 
 	// Create a client instance
