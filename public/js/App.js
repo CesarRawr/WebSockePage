@@ -60,7 +60,7 @@ const main = () => {
 	client.onMessageArrived = onMessageArrived;
 
 	// connect the client
-	client.connect({onSuccess:onConnect});
+	client.connect({useSSL: true, onSuccess:onConnect});
 
 
 	// called when the client connects
