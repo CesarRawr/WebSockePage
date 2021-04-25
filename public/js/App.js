@@ -1,7 +1,5 @@
 const main = () => {
 
-
-		let asd = 5;
 	/*
 		------------------------
 			       Map
@@ -47,13 +45,15 @@ const main = () => {
 		------------------------
 	*/
 
+	let clientName = `LostMessage#${ Math.floor(Math.random() * 999999) + 1 }`;
+
 	const location = {
 		hostname: "broker.emqx.io",
 		port: 8084
 	}
 
 	// Create a client instance
-	client = new Paho.MQTT.Client(location.hostname, Number(location.port), "LostMessage");
+	client = new Paho.MQTT.Client(location.hostname, Number(location.port), clientName);
 
 	// set callback handlers
 	client.onConnectionLost = onConnectionLost;
