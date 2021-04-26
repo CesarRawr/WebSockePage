@@ -1,3 +1,7 @@
+/*
+	https://web-socket-page.herokuapp.com/
+*/
+
 const main = () => {
 
 	/*
@@ -28,7 +32,7 @@ const main = () => {
 	const setMarker = (json) => {
 		
 		let popup = popupTemplate(json);
-		let marker = L.marker([json.coordinates.x, json.coordinates.y]).addTo(mymap);
+		let marker = L.marker([json.coordinates.lat, json.coordinates.lon]).addTo(mymap);
 
 		marker.bindPopup(popup);
 		data.push(json);
@@ -37,17 +41,18 @@ const main = () => {
 
 	const updateMarker = (json, index) => {
 
-		console.log("Tempo: " + json.tem + " Hum: " + json.hum);
+		let popup;
+
+		console.log("Name: " + json.name + " Tempo: " + json.tem + " Hum: " + json.hum);
 		data[index] = json;
 
-		if (markers[index].isPopupOpen()) {
-			let popup = document.querySelector(`#${ json.id }`);
-			let temp = popup.querySelector("span.tem-data");
-			let hum = popup.querySelector("span.hum-data");
-
-			temp.textContent = `${json.tem} °C`;
-			hum.textContent = json.hum;
-		}
+		markers[index].isPopupOpen() ? (
+			popup = document.querySelector(`#${ json.id }`),
+			popup.querySelector("span.tem-data > span").textContent = json.tem,
+			popup.querySelector("span.hum-data").textContent = json.hum
+		):(
+			markers[index]._popup.options._content = popupTemplate(json)
+		);
 	}
 
 	/*
@@ -56,7 +61,7 @@ const main = () => {
 		------------------------
 	*/
 
-	let clientName = `LostMessage#${ Math.floor(Math.random() * 999999) + 1 }`;
+	let clientName = `LostMessage#${ Math.floor(Math.random() * 99999999) + 1 }`;
 
 	const location = {
 		hostname: "broker.emqx.io",
@@ -85,6 +90,7 @@ const main = () => {
 	function onConnectionLost(responseObject) {
 	  if (responseObject.errorCode !== 0) {
 	    console.log("onConnectionLost:"+responseObject.errorMessage);
+	    client.connect({useSSL: true, onSuccess:onConnect});
 	  }
 	}
 
@@ -121,9 +127,14 @@ const main = () => {
 		return `
 			<div class="popup-info" id="${ json.id }">
 				<div>
+					<div class="name">
+						<h3>${ json.name }</h3>
+					</div>
 					<div class="temp">
-						<span class="name">Temperatura</span>
-						<span class="tem-data">${ json.tem } °C</span>
+						<span class="name">Tempo</span>
+						<span class="tem-data"> 
+							<span>${ json.tem }</span> °C
+						</span>
 					</div>
 					<div class="hum">
 						<span class="name">Humedad</span>
