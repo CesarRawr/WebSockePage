@@ -26,17 +26,28 @@ const main = () => {
 	// -----------------------
 
 	const setMarker = (json) => {
+		
+		let popup = popupTemplate(json);
 		let marker = L.marker([json.coordinates.x, json.coordinates.y]).addTo(mymap);
-		marker.bindPopup(`<b>temperatura</b><br>${ json.tem }`);
+
+		marker.bindPopup(popup);
 		data.push(json);
 		markers.push(marker);
 	}
 
 	const updateMarker = (json, index) => {
+
 		console.log("Tempo: " + json.tem + " Hum: " + json.hum);
 		data[index] = json;
-		let popup = markers[index].getPopup();
-		popup._content = `<b>temperatura</b><br>${ json.tem }`;
+
+		if (markers[index].isPopupOpen()) {
+			let popup = document.querySelector(`#${ json.id }`);
+			let temp = popup.querySelector("span.tem-data");
+			let hum = popup.querySelector("span.hum-data");
+
+			temp.textContent = `${json.tem} °C`;
+			hum.textContent = json.hum;
+		}
 	}
 
 	/*
@@ -104,6 +115,23 @@ const main = () => {
 				updateMarker(json, isData)
 			)
 		);
+	}
+
+	function popupTemplate(json) {
+		return `
+			<div class="popup-info" id="${ json.id }">
+				<div>
+					<div class="temp">
+						<span class="name">Temperatura</span>
+						<span class="tem-data">${ json.tem } °C</span>
+					</div>
+					<div class="hum">
+						<span class="name">Humedad</span>
+						<span class="hum-data">${ json.hum }</span>
+					</div>
+				</div>
+			</div>
+		`;
 	}
 }
 
